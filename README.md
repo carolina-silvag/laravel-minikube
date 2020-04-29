@@ -147,7 +147,7 @@ __Creamos un deployments__
 
 `kubectl create deployment laravel-minikube --image=laravel-minikube:v1`
 
-__revisamos los deployment_
+__revisamos los deployment__
 
 `kubectl get deployments`
 
