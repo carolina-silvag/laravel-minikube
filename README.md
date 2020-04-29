@@ -1,42 +1,140 @@
-# Laravel Kubernetes Demo Application
+# Docker kubernetes minikuber laravel
 
-A simple Laravel Demo Application for a Kubernetes Tutorial.
+## Integrantes:
 
-This application is a simple stateless Laravel installation for learning how to deploy a PHP application to Kubernetes.
+* Carolina Silva
+* Andrés Navarro
+* Luis Pradenas
+* David Arellano
 
-As detailed in [this tutorial](https://learnk8s.io/blog/deploying-laravel-to-kubernetes/)
+## Introducción
 
+Una aplicación simple realizada en el framework laravel para utilizar docker y kubernetes por medio de la herramienta minikube que facilita su implementación local.
 
-## Installation
+Para los siguientes pasos se utilizó el sistema operativo Mac OS.
 
-This application is nothing more than a simple stateless Laravel installation. However if you wish to install it, simply follow these steps:
+## Instalación de docker
 
-__Clone the repository__
+`brew cask install docker `
 
-`git clone git@github.com:learnk8s/laravel-kubernetes-demo.git`
+__Comprobar version de docker__
 
-__Install dependencies__
+`docker --version `
+
+## Proyecto php con framework Laravel
+
+__Ruta local al proyecto Laravel__
+
+http://laravel-minikube.test/
+
+__clonar proyecto__
+
+`git clone https://github.com/carolina-silvag/laravel-minikube`
+
+__Instalar dependencias con composer__
 
 `composer install`
 
-## Documentation
 
-As detailed in [this tutorial](https://learnk8s.io/blog/deploying-laravel-to-kubernetes/)
+## Configuración de docker
 
-## Support
+__archivo dockerfile__
 
-Please email support@learnk8s.io
+```
+FROM composer:1.6.5 as build
 
-## Contribution
+WORKDIR /app
+COPY . /app
+RUN composer install
 
-Third party contributions are not available.
+FROM php:7.1.8-apache
+
+EXPOSE 80
+COPY --from=build /app /app
+COPY vhost.conf /etc/apache2/sites-available/000-default.conf
+RUN chown -R www-data:www-data /app \
+    && a2enmod rewrite
+```
+
+## Creación contenedor de docker
+
+__ingresar al directorio del proyecto__
+
+`cd ruta/al/proyecto/`
+
+__construir contenedor__
+
+`docker build -t laravel-minikube .`
+
+## Ejecutar el contenedor de docker
+
+__iniciar contenedor docker__
+`docker run -ti -p 8080:80  -e APP_KEY=base64:cUPmwHx4LXa4Z25HhzFiWCf7TlQmSqnt98pnuiHmzgY= laravel-minikube`
+
+__ruta proyecto docker__
+
+`http://localhost:8080`
 
 
-## Copyright
+## Instalar kubernetes
 
-Copyright &copy; learnk8s.io 2017 - 2018.
+__instalación por brew__
+
+`brew install kubectl`
+
+__conmprobar verisión__
+
+`kubectl version --client `
+
+## Instalar minikube
+
+__instalación minikube con brew__
+
+`brew install minikube`
+
+__version minikube__
+
+`minikube version `
+
+__iniciar minikube__
+
+`minikube start --driver=docker`
 
 
-## License
+## construir contenedor docker en minikube
 
-The Laravel framework and this demo are open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+`eval $(minikube docker-env)`
+
+`docker build -t laravel-minikube .`
+
+## Desplegando kubernetes
+
+`kubectl config use-context minikube`
+
+`kubectl run laravel-minikube --image=laravel-minikube --port=80 --image-pull-policy=IfNotPresent --env=APP_KEY=base64:cUPmwHx4LXa4Z25HhzFiWCf7TlQmSqnt98pnuiHmzgY=`
+
+
+__verificación de pods__
+
+`kubectl get pods`
+
+`minikube dashboard`
+
+
+## Exponiendo la aplicación
+
+__creamos un servicio__
+
+`kubectl expose pods laravel-minikube --type=NodePort --port=80`
+
+__ver los servicios__
+
+`kubectl get services`
+
+__ver aplicación desde minikube__
+
+`minikube service laravel-kubernetes-demo`
+
+
+## Escalando la aplicación
+
