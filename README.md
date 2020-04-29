@@ -69,6 +69,7 @@ __construir contenedor__
 ## Ejecutar el contenedor de docker
 
 __iniciar contenedor docker__
+
 `docker run -ti -p 8080:80  -e APP_KEY=base64:cUPmwHx4LXa4Z25HhzFiWCf7TlQmSqnt98pnuiHmzgY= laravel-minikube`
 
 __ruta proyecto docker__
