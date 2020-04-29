@@ -123,6 +123,8 @@ __verificación de pods__
 
 `kubectl get pods`
 
+__verificar en el dashboard__
+
 `minikube dashboard`
 
 
