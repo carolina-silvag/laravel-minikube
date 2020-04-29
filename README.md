@@ -64,13 +64,17 @@ __ingresar al directorio del proyecto__
 
 __construir contenedor__
 
-`docker build -t laravel-minikube .`
+`docker build -t laravel-minikube:v1 .`
+
+__revisar imagenes de docker__
+
+`docker images`
 
 ## Ejecutar el contenedor de docker
 
 __iniciar contenedor docker__
 
-`docker run -ti -p 8080:80  -e APP_KEY=base64:cUPmwHx4LXa4Z25HhzFiWCf7TlQmSqnt98pnuiHmzgY= laravel-minikube`
+`docker run -ti -p 8080:80  -e APP_KEY=base64:cUPmwHx4LXa4Z25HhzFiWCf7TlQmSqnt98pnuiHmzgY= laravel-minikube:v1`
 
 __ruta proyecto docker__
 
@@ -106,13 +110,13 @@ __iniciar minikube__
 
 `eval $(minikube docker-env)`
 
-`docker build -t laravel-minikube .`
+`docker build -t laravel-minikube:v1 .`
 
 ## Desplegando kubernetes
 
 `kubectl config use-context minikube`
 
-`kubectl run laravel-minikube --image=laravel-minikube --port=80 --image-pull-policy=IfNotPresent --env=APP_KEY=base64:cUPmwHx4LXa4Z25HhzFiWCf7TlQmSqnt98pnuiHmzgY=`
+`kubectl run laravel-minikube --image=laravel-minikube:v1 --port=80 --image-pull-policy=IfNotPresent --env=APP_KEY=base64:cUPmwHx4LXa4Z25HhzFiWCf7TlQmSqnt98pnuiHmzgY=`
 
 
 __verificación de pods__
@@ -134,8 +138,20 @@ __ver los servicios__
 
 __ver aplicación desde minikube__
 
-`minikube service laravel-kubernetes-demo`
+`minikube service laravel-minikube`
 
 
 ## Escalando la aplicación
+
+__Creamos un deployments__
+
+`kubectl create deployment laravel-minikube --image=laravel-minikube:v1`
+
+__revisamos los deployment_
+
+`kubectl get deployments`
+
+__escalamos a 3 pods el deployment__
+
+`kubectl scale --replicas=3 deployment.app/laravel-minikube`
 
